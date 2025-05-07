@@ -23,11 +23,11 @@ public class DictionaryTest {
 	 */
 	public static void main(String[] args)  {
 		//testSortedArrayDictionary();
-		//testLinkedHashDictionary();
-		//testOpenHashWithQuadraticProbingDictionary();
-		//testBinaryTreeDictionary();
+		testLinkedHashDictionary();
+		testOpenHashWithQuadraticProbingDictionary();
+		testBinaryTreeDictionary();
 
-		cpuTime();
+		//cpuTime();
 	}
 
 	private static void cpuTime() {

@@ -7,7 +7,7 @@ import java.util.NoSuchElementException;
 public class OpenHashDictionary<K, V> implements Dictionary<K, V> {
 
     // Marker für gelöschte Einträge
-    private static final Entry<?, ?> DELETED = new Entry<>(null, null);
+    private final Entry<K, V> DELETED = new Entry<>(null, null);
 
     private Entry<K, V>[] tab;
     private int size;
@@ -23,7 +23,7 @@ public class OpenHashDictionary<K, V> implements Dictionary<K, V> {
         size = 0;
     }
 
-    // übernommen aus 2-
+    // übernommen aus 2- erteugt hashwert für schlüssle key
     private int h(K key) {
         int adr = key.hashCode();
         if (adr < 0)
@@ -39,12 +39,13 @@ public class OpenHashDictionary<K, V> implements Dictionary<K, V> {
         return sign * offset * offset;
     }
 
-    //übernommen aus 2-20
+    //übernommen aus 2-20 sucht speicheradresse eines bestimmten keys in der hashtabelle
     private int searchAdr(K key) {
         int j = 0;
         int adr;
         do {
             adr = (h(key) + s(j)) % tab.length;
+            adr = Math.floorMod(h(key) + s(j), tab.length);
             if (adr < 0) adr += tab.length;
             if (tab[adr] == null)
                 return -1;
@@ -86,7 +87,7 @@ public class OpenHashDictionary<K, V> implements Dictionary<K, V> {
         throw new IllegalStateException("Hashtable full");
     }
 
-    //+bernommen aus 2-20
+    //+bernommen aus 2-20 gibt den wert des schlüssels zurück mithilfe der adresse
     @Override
     public V search(K key) {
         int adr = searchAdr(key);
@@ -102,7 +103,7 @@ public class OpenHashDictionary<K, V> implements Dictionary<K, V> {
         if (adr == -1)
             return null;
         V old = tab[adr].getValue();
-        tab[adr] = (Entry<K, V>) DELETED; // Markiert diesen Platz als "gelöscht"
+        tab[adr] = DELETED; // Markiert diesen Platz als "gelöscht"
         size--;
         return old;
     }
@@ -112,14 +113,14 @@ public class OpenHashDictionary<K, V> implements Dictionary<K, V> {
         return size;
     }
 
-    ////////
+    //vergrößert hashtabelle wenn sie zu voll wird
     @SuppressWarnings("unchecked")
     private void grow() {
         Entry<K, V>[] old = tab;
-        int newCap = nextPrime4iPlus3(2 * old.length);
-        tab = (Entry<K, V>[]) new Entry[newCap];
+        int newCap = nextPrime4iPlus3(2 * old.length); //Primzahl der form 4*i + 3
+        tab = (Entry<K, V>[]) new Entry[newCap]; //neues, leeres Array mit neuer Kapazität
         size = 0;
-        for (Entry<K, V> e : old) {
+        for (Entry<K, V> e : old) { //kopiert alle gültigen einträge in neue tabelle
             if (e != null && e != DELETED) {
                 insert(e.getKey(), e.getValue());
             }
@@ -179,3 +180,4 @@ public class OpenHashDictionary<K, V> implements Dictionary<K, V> {
         return sb.toString();
     }
 }
+

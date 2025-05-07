@@ -130,7 +130,7 @@ public class BinaryTreeDictionary<K extends Comparable<K>, V> implements Diction
         return size;
     }
 
-    
+
     @Override
     public Iterator<Entry<K, V>> iterator() {
         return new Iterator<>() {
