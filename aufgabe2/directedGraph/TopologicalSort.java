@@ -22,35 +22,37 @@ public class TopologicalSort<V> {
 	 * Führt eine topologische Sortierung für g mit Tiefensuche durch.
 	 * @param g gerichteter Graph.
 	 */
+
+	//implementiert nach 8-36
 	public TopologicalSort(DirectedGraph<V> g) {
-        // 1. Zyklusprüfung
+        //1)Prüfen, ob ein Zyklus im Graphen ist
         DirectedCycle<V> dc = new DirectedCycle<>(g);
-        if (dc.hasCycle()) {
-            return; // keine topologische Sortierung möglich
+        if (dc.hasCycle()) { //aus Klasse DirectedCycle
+            return; //keine topologische Sortierung möglich
         }
 
-        // 2. DFS mit PostOrder
+        //2)Postorder Reihenfolge ermitteln
         Set<V> visited = new HashSet<>();
         LinkedList<V> postOrder = new LinkedList<>();
         for (V v : g.getVertexSet()) {
-            if (!visited.contains(v)) {
-                dfs(v, g, visited, postOrder);
+            if (!visited.contains(v)) { //wenn v nicht bescuht wurde, starte tiefensuche bei v
+                dfs(v, g, visited, postOrder); //wenn alle Nachfolger behandelt wurden, wird er zur postOrder-Liste hinzugefügt
             }
         }
 
         // 3. Invertiere PostOrder → topologische Sortierung
-        Collections.reverse(postOrder);
+        Collections.reverse(postOrder); //post-order gibt alle knoten nachdem alle nachfolger verarbeitet wurden, aber für topolgische sortierung brauchen wir knoten bevor ihre nachfolger kommen
         ts.addAll(postOrder);
     }
 
 	private void dfs(V v, DirectedGraph<V> g, Set<V> visited, List<V> postOrder) {
         visited.add(v);
-        for (V w : g.getSuccessorVertexSet(v)) {
-            if (!visited.contains(w)) {
+        for (V w : g.getSuccessorVertexSet(v)) { ///alle nachfolger w von v durchlaufen
+            if (!visited.contains(w)) { //wenn w nicht besucht, gehe tiefer in den graphen
                 dfs(w, g, visited, postOrder);
             }
         }
-        postOrder.add(v); // Post-Order
+        postOrder.add(v); // Post-Order-liste hinzufügen nachdem alle nachfolger durchlaufen wurden
     }
 
     

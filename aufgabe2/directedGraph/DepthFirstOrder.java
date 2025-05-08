@@ -20,11 +20,13 @@ public class DepthFirstOrder<V> {
     private final List<V> preOrder = new LinkedList<>();
     private final List<V> postOrder = new LinkedList<>();
     private final DirectedGraph<V> myGraph;
-    private int numberOfDFTrees = 0;
-	
+    private int numberOfDFTrees = 0; //zählt, wie viele Startpunkte es gab (für unzusammenhängende Teile)
+
+
+    //visitDf implementiert wie in 8-2 zusätzlich mit pre und post order
     private void visitDF(V v, Set<V> visited) {
         visited.add(v);
-        preOrder.add(v);
+        preOrder.add(v); //v zum ersten mal betreten
     
         for (V w : myGraph.getSuccessorVertexSet(v)) {
             if (!visited.contains(w)) {
@@ -32,22 +34,25 @@ public class DepthFirstOrder<V> {
             }
         }
     
-        postOrder.add(v);
+        postOrder.add(v); //v nachdem alle rekursiven Aufrufe zu seinen Nachbarn abgeschlossen sind
     }
     
+
 
     /**
      * Führt eine Tiefensuche für g durch.
      *
      * @param g gerichteter Graph.
      */
+
+    //implementiert wie 8-12
    public DepthFirstOrder(DirectedGraph<V> g) {
-    this.myGraph = g;
+    this.myGraph = g; //speichert graphen g in my graph, damit visitDF damit arbeiten kann
     Set<V> visited = new HashSet<>();
 
     for (V v : g.getVertexSet()) {
-        if (!visited.contains(v)) {
-            numberOfDFTrees++;
+        if (!visited.contains(v)) { //wenn knoten unbesucht, starte DFs
+            numberOfDFTrees++; //zähle neuen DFS Baum hoch
             visitDF(v, visited);
         }
     }

@@ -12,7 +12,7 @@ import java.util.*;
  * @param <V> Knotentyp.
  */
 public class DirectedCycle<V> {
-	// ...
+
 	private final List<List<V>> cycles = new LinkedList<>();	// enthält alle gefundenen Zyklen
 	private final DirectedGraph<V> myGraph;
 
@@ -21,6 +21,8 @@ public class DirectedCycle<V> {
 	 * Vorsicht: bei Graphen mit Zyklen werden nicht alle Zyklen gefunden.
 	 * @param g gerichteter Graph.
 	 */
+
+	//implementiert wie in 8-24
 	public DirectedCycle(DirectedGraph<V> g) {
         this.myGraph = g;
         Set<V> visited = new HashSet<>();
@@ -34,6 +36,7 @@ public class DirectedCycle<V> {
         }
     }
 
+	//implementiert wie in 8-24
 	private void searchDFS(V v, Set<V> visited, Stack<V> path, Set<V> nodeInPath) {
         visited.add(v);
         path.push(v);
@@ -42,17 +45,19 @@ public class DirectedCycle<V> {
         for (V w : myGraph.getSuccessorVertexSet(v)) {
             if (!visited.contains(w)) {
                 searchDFS(w, visited, path, nodeInPath);
-            } else if (nodeInPath.contains(w)) {
-                // Rückwärtskante → Zyklus erkannt
+            } else if (nodeInPath.contains(w)) { //d.h w wurde bereits besucht und ist im akutellen pfad
+                //Vorbereitung, um Zyklus aus Stack "path" herauszuziehen
                 List<V> cycle = new LinkedList<>();
                 Iterator<V> it = path.iterator();
                 boolean inCycle = false;
+
+				//man geht den aktuellen Pfad (Stack) durch
                 while (it.hasNext()) {
                     V x = it.next();
-                    if (x.equals(w)) inCycle = true;
+                    if (x.equals(w)) inCycle = true; //sobald man beim Knoten w ist (Zyklusanfang), schaltet man inCycle = true
                     if (inCycle) cycle.add(x);
                 }
-                cycle.add(w); // Zyklus schließen
+                cycle.add(w); // Zyklus schließen, Startknoten w des Zyklus noch hinzufügen
                 cycles.add(cycle);
             }
         }
