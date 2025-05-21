@@ -91,55 +91,46 @@ public class ShortestPath<V> {
 	public boolean searchShortestPath(V s, V g) {
 		this.start = s;
 		this.goal = g;
-		// bei neu aufruf historie löschen
+
 		dist.clear();
 		pred.clear();
 		cand.clear();
 
-		dist.put(s, 0.0); // Vom Startknoten s zu sich selbst kostet es 0
+		dist.put(s, 0.0); // Startknoten zu sich selbst: Entfernung 0
 
-		// prio bei Dijkstra = bsísherige Entfernung vom Start
-		// prio bei A* = bisherige Entfernung + Schätzung, wie weit es noch bis zum Ziel
-		// ist
-		double prio = (h == null) ? 0.0 : h.estimatedCost(s, g); // Wenn keine Heuristik benutzen, ist Priorität 0,
-																	// ansonsten benutzen wir a, dann schäzte: wie weir
-																	// ust s vom ziel g entfernt?
-		cand.add(s, prio); // Knoten, die noch untersucht werden sollen = füge den Startknoten in die
-							// Kandidatenliste ein mit der Priorität prio
+		// prio bei Dijkstra = 0
+		// prio bei A* = 0 + Heuristik[v,g]
+		double prio = (h == null) ? 0.0 : h.estimatedCost(s, g);
+		cand.add(s, prio); // Knoten, die noch untersucht werden sollen - füge den Startknoten in
+							// Kandidatenliste ein
 
 		while (!cand.isEmpty()) {
-			V v = cand.removeMin(); // nimmt den vielversprechendesten knoten mit kleinster prio aus der Liste
+			V v = cand.removeMin(); // Knoten mit der kleinsten Priorität entfernen
 
-			// Animation Male den Knoten blau, das zeigt, dass er gerade unetrsucht wird
 			if (sim != null && v instanceof Integer)
-				sim.visitStation((Integer) v, Color.BLUE);
-
-			// Wenn v das Zeil g ist, brich ab
+				sim.visitStation((Integer) v, Color.BLUE); // Station vom Knoten v animieren
 			if (v.equals(g))
-				return true;
+				return true; // Zielknoten gefunden, aAbbruch
 
-			for (V w : this.g.getNeighborSet(v)) { // für alle Nachbarn w von v: überlege, ob du über v einen besseren
-													// Weg zu w findest
-				double cost = dist.get(v) + this.g.getWeight(v, w); // neue mögliche Weg zu w geht über v. Daher: Kosten
-																	// bis v + Kosten von v nach w
-				if (!dist.containsKey(w) || cost < dist.get(w)) { // wenn w noch gar nicht untersucht wurde oder der
-																	// neue weg billiger als der bisher bekannte
-					dist.put(w, cost); // aktualisiere die Kosten für w
-					pred.put(w, v); // aktualisiere den Vorgänger von w auf v
+			for (V w : this.g.getNeighborSet(v)) { // für alle Nachbarn w von v
+				double cost = dist.get(v) + this.g.getWeight(v, w); // Kosten von v nach w
 
-					// Falls Dijkstra -> prio = cost
-					// Falls A* -> prio = cost + Schätzung
+				if (!dist.containsKey(w) || cost < dist.get(w)) { // Erster Weg zu w oder kürzerer Weg
+					dist.put(w, cost); // neue Gesamtkosten
+					pred.put(w, v); // Vorgänger merken
+					// A* = d[v] + Heuristik(w,g)
+					// Dijkstra = d[v]
+
 					double priority = (h == null) ? cost : cost + h.estimatedCost(w, g);
-					if (cand.get(w) != null) // wenn w schon drinnen sist, ändere priorität
-						cand.change(w, priority);
+					if (cand.get(w) != null)
+						cand.change(w, priority); // prioritätswert ändern wenn w in liste ist
 					else
 						cand.add(w, priority); // sonst füge w neu ein
 				}
 			}
 		}
 
-		return false; // Wenn man aus der Schleife kommt, ohne das Zeil g gefunden zu haben, gibts
-						// keinen Weg
+		return false; // kein Weg gefunden
 	}
 
 	/**
@@ -157,12 +148,12 @@ public class ShortestPath<V> {
 		LinkedList<V> path = new LinkedList<>();
 		V v = goal;
 		while (!v.equals(start)) {
-			path.addFirst(v);
-			v = pred.get(v);
+			path.addFirst(v); // Knoten v vorne in Liste einfügen
+			v = pred.get(v); // Vorgänger von v
 			if (v == null)
 				throw new IllegalArgumentException("Kein Pfad vorhanden.");
 		}
-		path.addFirst(start);
+		path.addFirst(start); // Startknoten noch vorne einfügen
 		return path;
 	}
 

@@ -60,14 +60,14 @@ public class ScotlandYardHeuristic implements Heuristic<Integer> {
         Point pu = coord.get(u);
         Point pv = coord.get(v);
         if (pu == null || pv == null)
-            return 0.0; // Fallback, falls ein Knoten keine Koordinaten hat
+            return 0.0;
 
         // Euklidischer Abstand
         double dx = pu.x - pv.x;
         double dy = pu.y - pv.y;
         double dist = Math.sqrt(dx * dx + dy * dy);
 
-        // Skalierung des Abstands auf Spiellogik-Niveau
-        return dist * 0.02; // Beispielwert, kann angepasst werden
+        // Skalorierung
+        return dist * 0.02;
     }
 }

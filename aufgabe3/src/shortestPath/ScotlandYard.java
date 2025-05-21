@@ -14,12 +14,14 @@ import java.util.Scanner;
 
 /**
  * Kürzeste Wege im Scotland-Yard Spielplan mit A* und Dijkstra.
+ * 
  * @author Oliver Bittel
  * @since 30.06.2024
  */
 public class ScotlandYard {
 	/**
 	 * Scotland-Yard Anwendung.
+	 * 
 	 * @param args wird nicht verwendet.
 	 * @throws FileNotFoundException
 	 */
@@ -47,6 +49,7 @@ public class ScotlandYard {
 
 	/**
 	 * Scotland-Yard Anwendung.
+	 * 
 	 * @param args wird nicht verwendet.
 	 * @throws FileNotFoundException
 	 */
@@ -100,17 +103,18 @@ public class ScotlandYard {
 		sim.stopSequence();
 	}
 
-
 	/**
-	 * Fabrikmethode zur Erzeugung eines gerichteten Graphens für den Scotland-Yard-Spielplan.
+	 * Fabrikmethode zur Erzeugung eines gerichteten Graphens für den
+	 * Scotland-Yard-Spielplan.
 	 * <p>
 	 * Liest die Verbindungsdaten von der Datei ScotlandYard_Kanten.txt.
 	 * Für die Verbindungen werden folgende Gewichte angenommen:
 	 * U-Bahn = 5, Taxi = 2 und Bus = 3.
 	 * Falls Knotenverbindungen unterschiedliche Beförderungsmittel gestatten,
-	 * wird das billigste Beförderungsmittel gewählt. 
-	 * Bei einer Vebindung von u nach v wird in den gerichteten Graph sowohl 
+	 * wird das billigste Beförderungsmittel gewählt.
+	 * Bei einer Vebindung von u nach v wird in den gerichteten Graph sowohl
 	 * eine Kante von u nach v als auch von v nach u eingetragen.
+	 * 
 	 * @return Gerichteter und Gewichteter Graph für Scotland-Yard.
 	 * @throws FileNotFoundException
 	 */
@@ -132,23 +136,21 @@ public class ScotlandYard {
 			else if (s.equals("Bus"))
 				g = 3;
 			else
-				g = 5;
-			
+				g = 5; // Aufgabe 4, Gewicht für Ubahn ändern zu 9999999
+
 			if (!sy_graph.containsEdge(u, v) || g < sy_graph.getWeight(u, v))
 				sy_graph.addEdge(u, v, g);
 		}
-		
-		// Test, ob alle Kanten eingelesen wurden: 
-		System.out.println("Number of Vertices: " + sy_graph.getNumberOfVertexes());  // 199
-		System.out.println("Number of Edges:    " + sy_graph.getNumberOfEdges());	  // 431
+
+		// Test, ob alle Kanten eingelesen wurden:
+		System.out.println("Number of Vertices: " + sy_graph.getNumberOfVertexes()); // 199
+		System.out.println("Number of Edges:    " + sy_graph.getNumberOfEdges()); // 431
 		double wSum = 0.0;
 		for (Integer v : sy_graph.getVertexSet())
 			for (Integer w : sy_graph.getNeighborSet(v))
-				wSum += sy_graph.getWeight(v,w);
-		System.out.println("Sum of all Weights: " + wSum);		// 1972.0
+				wSum += sy_graph.getWeight(v, w);
+		System.out.println("Sum of all Weights: " + wSum); // 1972.0
 
 		return sy_graph;
 	}
 }
-
-
