@@ -24,10 +24,9 @@ import java.util.Set;
 public class UnionFind<T> {
     // ...
     // Seite 14-19: Sind Eltemente von einem beliebigen Typ, dann kann fürs
-    // Elternfeld eine Map verwendet werden
+    // Elternfeld ne Map verwendet werden
     private final Map<T, T> parent = new HashMap<>(); // für jedes element elternknoten speichern
-    private final Map<T, Integer> rank = new HashMap<>(); // hilfswert, um zu entscheiden, welcher baum unter welchem
-                                                          // hängt
+    private final Map<T, Integer> rank = new HashMap<>(); // hilfswert: welcher baum ist höher?
     private int size;
 
     /**
@@ -42,15 +41,14 @@ public class UnionFind<T> {
         // ...
         for (T element : s) {
             parent.put(element, element); // jedes element ist zunächst sein eigener elternknoten
-            rank.put(element, 0); // anfangs ist jeder baum flach
+            rank.put(element, 0); // anfangs ist jeder baum 0 hoch
         }
-        size = s.size(); // es gibt so viele teilmengen wie elemente
+        size = s.size(); // Anfangs ist Anzahl Teilbäume = Anzahl Elemente
     }
 
     /**
      * Liefert den ReprÃ¤sentanten der Teilmenge zurÃ¼ck, zu der e gehÃ¶rt.
      * Pfadkompression wird angewendet.
-     * 
      * Finde den Repräsentanten (Wurzel) der Teilmenge, zu der e gehört
      * 
      * @param e Element
@@ -63,7 +61,7 @@ public class UnionFind<T> {
             throw new IllegalArgumentException("Element nicht enthalten: " + e);
 
         T p = parent.get(e); // hole aktuellen Elternknoten p
-        if (!p.equals(e)) { // fals e nicht Wurzel ist
+        if (!p.equals(e)) { // falls e nicht Wurzel ist
             T root = find(p); // gehe zur wurzel
             parent.put(e, root); // verlinke e direkt mit der wurzel, Pfadkompression
             return root;
@@ -118,7 +116,7 @@ public class UnionFind<T> {
         // ...
         System.out.println("Union-Find Struktur:");
         for (T element : parent.keySet()) {
-            System.out.println(element + " → " + parent.get(element));
+            System.out.println(element + " -> " + parent.get(element));
         }
 
     }

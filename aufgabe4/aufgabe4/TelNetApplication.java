@@ -10,14 +10,14 @@ public class TelNetApplication {
         TelNet netz = new TelNet(7);
 
         netz.addTelKnoten(1, 1);
-        netz.addTelKnoten(2, 5);
-        netz.addTelKnoten(3, 2);
-        netz.addTelKnoten(4, 4);
-        netz.addTelKnoten(5, 1);
-        netz.addTelKnoten(6, 6);
-        netz.addTelKnoten(7, 3);
+        netz.addTelKnoten(3, 1);
+        netz.addTelKnoten(4, 2);
+        netz.addTelKnoten(3, 4);
+        netz.addTelKnoten(2, 6);
+        netz.addTelKnoten(7, 6);
+        netz.addTelKnoten(4, 7);
 
-        boolean ok = netz.computeOptTelNet();
+        boolean ok = netz.computeOptTelNet(); // Kruskal Algorithmus starten um MST zu berechnen
         System.out.println("Beispielnetz MST gefunden: " + ok);
         System.out.println("Gesamtkosten: " + netz.getOptTelNetKosten());
 

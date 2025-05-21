@@ -15,7 +15,7 @@ public class TelNet {
     /**
      * Fügt einen neuen Knoten mit den Koordinaten (x,y) hinzu. Nur wenn er noch
      * nicht in der Liste ist.
-     * 
+     *
      * @param x x-Koordinate
      * @param y y-Koordinate
      * @return true, wenn der Knoten erfolgreich hinzugefügt wurde, false, wenn er
@@ -41,14 +41,18 @@ public class TelNet {
         kosten = 0;
 
         // Alle gültigen Verbindungen erzeugen
-        PriorityQueue<TelVerbindung> pq = new PriorityQueue<>(Comparator.comparingInt(TelVerbindung::c));
+        PriorityQueue<TelVerbindung> pq = new PriorityQueue<>(Comparator.comparingInt(TelVerbindung::c)); // Bernindungen
+                                                                                                          // aufsteigend
+                                                                                                          // nach ihren
+                                                                                                          // kosten c
+        // soriteren
         for (int i = 0; i < knotenListe.size(); i++) {
-            TelKnoten u = knotenListe.get(i);
+            TelKnoten u = knotenListe.get(i); // aktueller Knoten
             for (int j = i + 1; j < knotenListe.size(); j++) {
-                TelKnoten v = knotenListe.get(j);
-                int dist = Math.abs(u.x() - v.x()) + Math.abs(u.y() - v.y());
+                TelKnoten v = knotenListe.get(j); // nächster Knoten
+                int dist = Math.abs(u.x() - v.x()) + Math.abs(u.y() - v.y()); // Manhattan-Distanz
                 if (dist <= lbg) {
-                    pq.add(new TelVerbindung(u, v, dist));
+                    pq.add(new TelVerbindung(u, v, dist)); // Verbindung hinzufügen, wenn sie innerhalb der lbg ist
                 }
             }
         }
@@ -57,33 +61,37 @@ public class TelNet {
         UnionFind<TelKnoten> uf = new UnionFind<>(new HashSet<>(knotenListe));
 
         // Kruskal ausführen
-        while (!pq.isEmpty() && mst.size() < knotenListe.size() - 1) {
+        while (!pq.isEmpty() && mst.size() < knotenListe.size() - 1) { // günstigste verbidnugn aus der priority queue
             TelVerbindung verbindung = pq.poll();
             TelKnoten u = verbindung.u();
             TelKnoten v = verbindung.v();
-            if (!uf.find(u).equals(uf.find(v))) {
-                uf.union(u, v);
-                mst.add(verbindung);
-                kosten += verbindung.c();
+            if (!uf.find(u).equals(uf.find(v))) { // wenn die beiden Knoten nicht im selben Baum sind
+                uf.union(u, v); // sie vereinigen
+                mst.add(verbindung); // Verbindung zum MST hinzufügen
+                kosten += verbindung.c(); // Gesamtkosten erhöhen
             }
         }
 
-        return mst.size() == knotenListe.size() - 1;
+        return mst.size() == knotenListe.size() - 1; // Überprüfen, ob der MST alle Knoten verbindet
     }
 
+    // Liefert ein optimales Telefonnetz als Liste von Telefonverbindungen zurück.
     public List<TelVerbindung> getOptTelNet() {
         if (mst == null)
             throw new IllegalStateException("Zuerst computeOptTelNet() aufrufen.");
         return mst;
     }
 
+    // liefert die Gesamtkosten eines optimalen Telefonnetzes zurück.
     public int getOptTelNetKosten() {
         if (mst == null)
             throw new IllegalStateException("Zuerst computeOptTelNet() aufrufen.");
         return kosten;
     }
 
-    public void drawOptTelNet(int xMax, int yMax) {
+    // Zeichnet das gefundene optimale Telefonnetz mit der Größe xMax*yMax in ein
+    // Fenster.
+    public void drawOptTelNet(int xMax, int yMax) { // größe des gitters angeben
         if (mst == null)
             throw new IllegalStateException("Zuerst computeOptTelNet() aufrufen.");
 
@@ -96,16 +104,18 @@ public class TelNet {
         }
 
         for (TelVerbindung v : mst) {
-            StdDraw.line(v.u().x(), v.u().y(), v.v().x(), v.v().y());
+            StdDraw.line(v.u().x(), v.u().y(), v.v().x(), v.v().y()); // linie zwischen den Knoten zeichnen
         }
     }
 
+    // Erzeugt n zufällige Knoten, und platziere sie im Gitterbereich von 0 bis xMax
+    // und yMax.
     public void generateRandomTelNet(int n, int xMax, int yMax) {
         Random rand = new Random();
         while (knotenListe.size() < n) {
-            int x = rand.nextInt(xMax + 1);
+            int x = rand.nextInt(xMax + 1); // +1, damit 0 bis n einschliesslich
             int y = rand.nextInt(yMax + 1);
-            addTelKnoten(x, y);
+            addTelKnoten(x, y); // neuen Telefonknoten hinzufügen zur liste
         }
     }
 
@@ -118,10 +128,11 @@ public class TelNet {
         return "TelNet mit " + knotenListe.size() + " Knoten.";
     }
 
+    // Aufgabe 5
     public static void main(String[] args) {
-        TelNet netz = new TelNet(100);
-        netz.generateRandomTelNet(1000, 1000, 1000);
-        boolean erfolgreich = netz.computeOptTelNet();
+        TelNet netz = new TelNet(100); // lbg 100
+        netz.generateRandomTelNet(1000, 1000, 1000); // generieren sie....
+        boolean erfolgreich = netz.computeOptTelNet(); // berechnen sie den MST
         System.out.println("MST gefunden: " + erfolgreich);
         System.out.println("Gesamtkosten: " + netz.getOptTelNetKosten());
         netz.drawOptTelNet(1000, 1000);
