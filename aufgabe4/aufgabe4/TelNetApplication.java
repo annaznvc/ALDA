@@ -2,8 +2,8 @@ package aufgabe4;
 
 public class TelNetApplication {
     public static void main(String[] args) {
-        testBeispielnetz(); // Aufgabe 4
-        // testGrossesNetz(); // Aufgabe 5
+        // testBeispielnetz(); // Aufgabe 4
+        testGrossesNetz(); // Aufgabe 5
     }
 
     public static void testBeispielnetz() {

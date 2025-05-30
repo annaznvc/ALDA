@@ -128,13 +128,4 @@ public class TelNet {
         return "TelNet mit " + knotenListe.size() + " Knoten.";
     }
 
-    // Aufgabe 5
-    public static void main(String[] args) {
-        TelNet netz = new TelNet(100); // lbg 100
-        netz.generateRandomTelNet(1000, 1000, 1000); // generieren sie....
-        boolean erfolgreich = netz.computeOptTelNet(); // berechnen sie den MST
-        System.out.println("MST gefunden: " + erfolgreich);
-        System.out.println("Gesamtkosten: " + netz.getOptTelNetKosten());
-        netz.drawOptTelNet(1000, 1000);
-    }
 }

@@ -40,7 +40,8 @@ public class UnionFind<T> {
     public UnionFind(Set<T> s) {
         // ...
         for (T element : s) {
-            parent.put(element, element); // jedes element ist zunächst sein eigener elternknoten
+            // parent.put(element, element); // jedes element ist zunächst sein eigener
+            // elternknoten
             rank.put(element, 0); // anfangs ist jeder baum 0 hoch
         }
         size = s.size(); // Anfangs ist Anzahl Teilbäume = Anzahl Elemente
@@ -55,18 +56,18 @@ public class UnionFind<T> {
      * @throws IllegalArgumentException falls e nicht in der Partionierung vorkommt.
      * @return ReprÃ¤sentant der Teilmenge, zu der e gehÃ¶rt.
      */
-    public T find(T e) {
-        // ...
-        if (!parent.containsKey(e))
-            throw new IllegalArgumentException("Element nicht enthalten: " + e);
 
-        T p = parent.get(e); // hole aktuellen Elternknoten p
-        if (!p.equals(e)) { // falls e nicht Wurzel ist
-            T root = find(p); // gehe zur wurzel
-            parent.put(e, root); // verlinke e direkt mit der wurzel, Pfadkompression
-            return root;
+    public T find(T e) {
+        // Initialisiere das Element dynamisch, falls es nicht existiert
+        parent.putIfAbsent(e, e);
+        rank.putIfAbsent(e, 0);
+
+        // Pfadkompression durchführen
+        if (!parent.get(e).equals(e)) {
+            parent.put(e, find(parent.get(e)));
         }
-        return p; // e ist schon die wurzel
+
+        return parent.get(e); // Gib die Wurzel zurück
     }
 
     /**
@@ -81,32 +82,37 @@ public class UnionFind<T> {
      *                                  Union-Find-Struktur sind.
      */
     public void union(T e1, T e2) {
-        // ...
-        if (!parent.containsKey(e1) || !parent.containsKey(e2))
-            throw new IllegalArgumentException("Element(e) nicht enthalten");
+        // Dynamically initialize elements if they are not present
+        parent.putIfAbsent(e1, e1);
+        rank.putIfAbsent(e1, 0);
+        parent.putIfAbsent(e2, e2);
+        rank.putIfAbsent(e2, 0);
 
+        // Finde die Wurzeln der beiden Elemente
         T root1 = find(e1);
         T root2 = find(e2);
 
+        // Wenn beide Elemente bereits in derselben Teilmenge sind, nichts tun
         if (root1.equals(root2))
-            return; // Bereits vereint
+            return;
 
-        // Vergleich ranking beider bäume
+        // Vergleiche die Ränge der beiden Bäume
         int rank1 = rank.get(root1);
         int rank2 = rank.get(root2);
 
-        // Kleineren Baum an größeren anhängen
+        // Hänge den kleineren Baum unter den größeren
         if (rank1 < rank2) {
             parent.put(root1, root2);
         } else if (rank1 > rank2) {
             parent.put(root2, root1);
-        } else { // bei gleichheit frei wählbar wen man unter wen hängt
+        } else {
+            // Bei gleicher Höhe: Wähle einen beliebigen und erhöhe den Rang
             parent.put(root2, root1);
-            rank.put(root1, rank1 + 1); // root 1 ist jetzt eine ebene höher
+            rank.put(root1, rank1 + 1);
         }
 
-        size--; // Zwei gruppen zu einer geworden
-
+        // Reduziere die Anzahl der Teilmengen
+        size--;
     }
 
     /**
